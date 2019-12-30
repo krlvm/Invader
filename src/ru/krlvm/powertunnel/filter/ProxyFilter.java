@@ -59,7 +59,7 @@ public class ProxyFilter extends HttpFiltersAdapter {
         if(httpObject instanceof FullHttpResponse) {
             FullHttpResponse response = ((FullHttpResponse) httpObject);
             String content = response.content().toString(StandardCharsets.UTF_8);
-            if(content.contains("</html>")) {
+            if(content.contains("</html>") || content.contains("</HTML>")) {
                 StringBuilder siteScripts = new StringBuilder();
                 if(complexResponse.getServerHostAndPort() != null) {
                     String server = URLUtility.clearHost(complexResponse.getServerHostAndPort());
