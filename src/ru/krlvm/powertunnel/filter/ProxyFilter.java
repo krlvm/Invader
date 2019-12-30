@@ -70,7 +70,8 @@ public class ProxyFilter extends HttpFiltersAdapter {
                         }
                     }
                 }
-                content = content.replace("</html>", "<script>" + Invader.MAIN_SCRIPT + "</script>" + siteScripts.toString() + "</html>");
+                content = content.replace("</html>", "<script>" + Invader.MAIN_SCRIPT + "</script>" + siteScripts.toString() + "</html>")
+                    .replace("</HTML>", "<SCRIPT>" + Invader.MAIN_SCRIPT + "</SCRIPT>" + siteScripts.toString() + "</HTML>");
                 try {
                     Field contentField;
                     if (httpObject.getClass().getSimpleName().equals("DefaultHttpContent") || httpObject.getClass().getSimpleName().equals("DefaultFullHttpResponse")) {
