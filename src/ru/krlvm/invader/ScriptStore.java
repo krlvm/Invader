@@ -17,9 +17,6 @@ public class ScriptStore extends DataStore {
         StringBuilder builder = new StringBuilder();
         for (String line : getLoadedLines()) {
             builder.append(line);
-            if(!line.trim().isEmpty() && !line.endsWith(";")) {
-                builder.append(";");
-            }
         }
         return builder.toString();
     }
