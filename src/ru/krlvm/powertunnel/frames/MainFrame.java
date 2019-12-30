@@ -103,6 +103,8 @@ public class MainFrame extends ControlFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Invader.loadScripts();
+                    JOptionPane.showMessageDialog(MainFrame.this, "Scripts have been reloaded",
+                            "Success", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(MainFrame.this, "An error occurred while reading scripts: " + ex.getMessage(),
                             "Error", JOptionPane.ERROR_MESSAGE);
