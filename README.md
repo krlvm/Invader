@@ -9,7 +9,7 @@ Download a binary from the `Releases` tab or build it yourself.
 You need Java 7+.
 
 ### Configure Invader
-Launch Invader and try to start the proxy server. There will be created some configuration files. Open `cert-password.txt` and write there a your certificate password. Certificate will be generated automatically.
+Launch Invader and try to start the proxy server. There will be created some configuration files. Open `cert-password.txt` and write there invented by you strong certificate password. Certificate will be generated automatically.
 
 In `scripts` folder you can find `main.js`. It is a script, that will be injected to all webpages. If you need to inject a some script to a specific webpage you can create there a `.js` file and write it to the `script-map.txt`. Example: `github.com:github-script`, i.e. you have to create `github-script.js` in `scripts` folder. You have to write only the script name.
 
