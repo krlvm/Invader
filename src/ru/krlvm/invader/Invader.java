@@ -89,11 +89,11 @@ public class Invader {
             return MAIN_SCRIPT;
         }
         Collection<String> scripts = SITE_SCRIPTS.get(site.toLowerCase());
+        if(scripts == null) {
+            return MAIN_SCRIPT;
+        }
         if(SITE_SCRIPTS.containsKey("*")) {
             scripts.addAll(SITE_SCRIPTS.get("*"));
-        }
-        if(scripts.isEmpty()) {
-            return MAIN_SCRIPT;
         }
         StringBuilder script = new StringBuilder();
         if(MAIN_SCRIPT != null) {

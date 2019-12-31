@@ -73,7 +73,7 @@ public class ProxyFilter extends HttpFiltersAdapter {
                         contentField.setAccessible(accessibility);
                         response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, content.getBytes().length);
                     } catch (Exception ex) {
-                        Utility.print("Failed to make an injection: " + ex.getMessage());
+                        Utility.print("[x] Failed to make an injection: " + ex.getMessage());
                         Debugger.debug(ex);
                     }
                 }
