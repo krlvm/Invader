@@ -44,6 +44,7 @@ public class Invader {
         }
 
         int count = 0;
+        SITE_SCRIPTS.clear();
         MAP_STORE.load();
         for (String line : MAP_STORE.getLoadedLines()) {
             if(line.startsWith("#") || line.trim().isEmpty()) {
