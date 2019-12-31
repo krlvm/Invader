@@ -56,7 +56,7 @@ public class ProxyFilter extends HttpFiltersAdapter {
         if(httpObject instanceof FullHttpResponse) {
             FullHttpResponse response = ((FullHttpResponse) httpObject);
             String content = response.content().toString(StandardCharsets.UTF_8);
-            if(content.contains("</html>") || content.contains("</HTML>")) {
+            if(content.endsWith("</html>") || content.endsWith("</HTML>")) {
                 String injection = Invader.getInjection(complexResponse.getServerHostAndPort());
                 if(injection != null) {
                     content = content + injection;
