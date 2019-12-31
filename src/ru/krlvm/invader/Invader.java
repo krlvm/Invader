@@ -88,7 +88,7 @@ public class Invader {
         if(site == null) {
             return MAIN_SCRIPT;
         }
-        Collection<String> scripts = SITE_SCRIPTS.get(site.toLowerCase());
+        Collection<String> scripts = SITE_SCRIPTS.get(URLUtility.clearHost(site.toLowerCase()));
         if(scripts == null) {
             return MAIN_SCRIPT;
         }
