@@ -9,13 +9,10 @@ import ru.krlvm.invader.Invader;
 import ru.krlvm.powertunnel.PowerTunnel;
 import ru.krlvm.powertunnel.utilities.Debugger;
 import ru.krlvm.powertunnel.utilities.HttpUtility;
-import ru.krlvm.powertunnel.utilities.URLUtility;
 import ru.krlvm.powertunnel.utilities.Utility;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Implementation of LittleProxy filter
@@ -60,33 +57,25 @@ public class ProxyFilter extends HttpFiltersAdapter {
             FullHttpResponse response = ((FullHttpResponse) httpObject);
             String content = response.content().toString(StandardCharsets.UTF_8);
             if(content.contains("</html>") || content.contains("</HTML>")) {
-                StringBuilder siteScripts = new StringBuilder();
-                if(complexResponse.getServerHostAndPort() != null) {
-                    String server = URLUtility.clearHost(complexResponse.getServerHostAndPort());
-                    List<String> scripts = Invader.getScripts(server);
-                    if(scripts != null) {
-                        for (String script : scripts) {
-                            siteScripts.append("<script>").append(script).append("</script>");
+                String injection = Invader.getInjection(complexResponse.getServerHostAndPort());
+                if(injection != null) {
+                    content = content + injection;
+                    try {
+                        Field contentField;
+                        if (httpObject.getClass().getSimpleName().equals("DefaultHttpContent") || httpObject.getClass().getSimpleName().equals("DefaultFullHttpResponse")) {
+                            contentField = response.getClass().getDeclaredField("content");
+                        } else {
+                            contentField = response.getClass().getSuperclass().getDeclaredField("content");
                         }
+                        boolean accessibility = contentField.isAccessible();
+                        contentField.setAccessible(true);
+                        contentField.set(response, Unpooled.copiedBuffer(content.getBytes()));
+                        contentField.setAccessible(accessibility);
+                        response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, content.getBytes().length);
+                    } catch (Exception ex) {
+                        Utility.print("Failed to make an injection: " + ex.getMessage());
+                        Debugger.debug(ex);
                     }
-                }
-                content = content.replace("</html>", "<script>" + Invader.MAIN_SCRIPT + "</script>" + siteScripts.toString() + "</html>")
-                    .replace("</HTML>", "<SCRIPT>" + Invader.MAIN_SCRIPT + "</SCRIPT>" + siteScripts.toString() + "</HTML>");
-                try {
-                    Field contentField;
-                    if (httpObject.getClass().getSimpleName().equals("DefaultHttpContent") || httpObject.getClass().getSimpleName().equals("DefaultFullHttpResponse")) {
-                        contentField = response.getClass().getDeclaredField("content");
-                    } else {
-                        contentField = response.getClass().getSuperclass().getDeclaredField("content");
-                    }
-                    boolean accessibility = contentField.isAccessible();
-                    contentField.setAccessible(true);
-                    contentField.set(response, Unpooled.copiedBuffer(content.getBytes()));
-                    contentField.setAccessible(accessibility);
-                    response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, content.getBytes().length);
-                } catch (Exception ex) {
-                    Utility.print("Failed to make an injection: " + ex.getMessage());
-                    Debugger.debug(ex);
                 }
             }
         }

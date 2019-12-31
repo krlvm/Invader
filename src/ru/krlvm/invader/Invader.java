@@ -10,10 +10,7 @@ import ru.krlvm.powertunnel.utilities.Utility;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The general class of Invader -
@@ -23,7 +20,7 @@ import java.util.Map;
  */
 public class Invader {
 
-    public static String MAIN_SCRIPT = "console.log('Invader is working');";
+    public static String MAIN_SCRIPT = null;
     private static Map<String, List<String>> SITE_SCRIPTS = new HashMap<>();
 
     private static final String SCRIPT_DIRECTORY = "scripts";
@@ -39,7 +36,12 @@ public class Invader {
         }
 
         MAIN_SCRIPT_STORE.load();
-        MAIN_SCRIPT = MAIN_SCRIPT_STORE.getScript();
+        String unformattedMainScript = MAIN_SCRIPT_STORE.getScript();
+        if(unformattedMainScript.isEmpty()) {
+            MAIN_SCRIPT = null;
+        } else {
+            MAIN_SCRIPT = "<script>" + unformattedMainScript + "</script>";
+        }
 
         int count = 0;
         MAP_STORE.load();
@@ -57,7 +59,7 @@ public class Invader {
             }
             ScriptStore script = new ScriptStore(SCRIPT_DIRECTORY + "/" + array[1]);
             script.load();
-            SITE_SCRIPTS.get(url).add(script.getScript());
+            SITE_SCRIPTS.get(url).add("<script>" + script.getScript() + "</script>");
             count++;
         }
 
@@ -80,5 +82,26 @@ public class Invader {
         }
         return new CertificateSniffingMitmManager(new Authority(new File("."),
                 "invader-mitm", password.toCharArray(), "Invader Root CA", "Invader MITM", "Invader", "Invader MITM", "Invader"));
+    }
+
+    public static String getInjection(String site) {
+        if(site == null) {
+            return MAIN_SCRIPT;
+        }
+        Collection<String> scripts = SITE_SCRIPTS.get(site.toLowerCase());
+        if(SITE_SCRIPTS.containsKey("*")) {
+            scripts.addAll(SITE_SCRIPTS.get("*"));
+        }
+        if(scripts.isEmpty()) {
+            return MAIN_SCRIPT;
+        }
+        StringBuilder script = new StringBuilder();
+        if(MAIN_SCRIPT != null) {
+            script.append(MAIN_SCRIPT);
+        }
+        for (String s : scripts) {
+            script.append(s);
+        }
+        return script.toString();
     }
 }
