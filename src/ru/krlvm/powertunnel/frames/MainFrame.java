@@ -171,7 +171,7 @@ public class MainFrame extends ControlFrame {
     }
 
     private String getHeaderText() {
-        return getCenteredLabel("<b>" + PowerTunnel.NAME + " v" + PowerTunnel.VERSION + "</b><br>Server is" + (PowerTunnel.isRunning() ? " running" : "n't running") + "</div></html>");
+        return getCenteredLabel("<b>" + PowerTunnel.NAME + " MITM v" + PowerTunnel.VERSION + "</b><br>Server is" + (PowerTunnel.isRunning() ? " running" : "n't running") + "</div></html>");
     }
 
     private String getCenteredLabel(String text) {
