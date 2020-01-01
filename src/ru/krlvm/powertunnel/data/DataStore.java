@@ -3,6 +3,7 @@ package ru.krlvm.powertunnel.data;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ public class DataStore {
 
     private final String fileName;
     protected List<String> loadedLines;
+    protected List<String> defaults;
 
     /**
      * DataStore constructor
@@ -30,6 +32,28 @@ public class DataStore {
      */
     public DataStore(String fileName) {
         this.fileName = fileName;
+    }
+
+    /**
+     * DataStore constructor
+     *
+     * @param fileName - data store file name
+     * @param defaults - default lines
+     */
+    public DataStore(String fileName, List<String> defaults) {
+        this.fileName = fileName;
+        this.defaults = defaults;
+    }
+
+    /**
+     * DataStore constructor
+     *
+     * @param fileName - data store file name
+     * @param defaultLine - default line
+     */
+    public DataStore(String fileName, String defaultLine) {
+        this.fileName = fileName;
+        this.defaults = Collections.singletonList(defaultLine);
     }
 
     /**
@@ -51,6 +75,10 @@ public class DataStore {
             return loadedLines;
         } else {
             create(file);
+            if(defaults != null) {
+                write(defaults);
+            }
+            loadedLines = defaults;
             return loadedLines;
         }
     }
@@ -99,9 +127,9 @@ public class DataStore {
     }
 
     /**
-     * Retrieves data store file format
+     * Retrieves data store file extension
      *
-     * @return data store file format
+     * @return data store file extension
      */
     public String getFileFormat() {
         return "txt";
@@ -114,6 +142,19 @@ public class DataStore {
      */
     public List<String> getLoadedLines() {
         return loadedLines;
+    }
+
+    /**
+     * Retrieves data store contents (in one line)
+     *
+     * @return data store contents
+     */
+    public String inline() {
+        StringBuilder builder = new StringBuilder();
+        for (String line : loadedLines) {
+            builder.append(line);
+        }
+        return builder.toString();
     }
 
     /**
