@@ -239,7 +239,7 @@ public class PowerTunnelMonitor {
                     if(!PowerTunnel.SNIFFER_UI_RENDER) {
                         snifferContent.append("</textarea>");
                     }
-                    snifferContent.append("</span><a href=\"#\" onclick=\"document.getElementById('content").append(currentId).append("').style.display='block';this.style.display='none';\">View</a></div>");
+                    snifferContent.append("</span><span style=\"cursor:pointer;color:blue;text-decoration:underline;\" onclick=\"document.getElementById('content").append(currentId).append("').style.display='block';this.style.display='none';\">View</span></div>");
                 }
                 return HttpUtility.getResponse(SNIFFER_HTML.replace("{content}", snifferContent.toString()));
             }
