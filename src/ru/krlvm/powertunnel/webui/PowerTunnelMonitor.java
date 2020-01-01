@@ -126,7 +126,7 @@ public class PowerTunnelMonitor {
     public static void load() throws IOException {
         HTML_STORE.load();
         HTML = HTML_STORE.inline();
-        Utility.print("[i] Web UI loaded: http://" + FAKE_ADDRESS);
+        Utility.print("[!] Sniffer is enabled now and available at http://" + FAKE_ADDRESS);
     }
 
     public static boolean checkUri(String uri) {

@@ -115,7 +115,7 @@ public class PowerTunnel {
                         break;
                     }
                     case "with-sniffer": {
-                        ENABLE_SNIFFER = false;
+                        ENABLE_SNIFFER = true;
                         break;
                     }
                     case "disable-ui-scaling": {
@@ -208,7 +208,6 @@ public class PowerTunnel {
         if(ENABLE_SNIFFER) {
             try {
                 PowerTunnelMonitor.load();
-                Utility.print("[!] Sniffer is enabled now and available at http://invadermitmmonitor.info");
             } catch (IOException ex) {
                 Utility.print("[x] Cannot load sniffer's Web UI, now it is disabled: " + ex.getMessage());
                 Debugger.debug(ex);
