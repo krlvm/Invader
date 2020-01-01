@@ -73,6 +73,7 @@ public class PowerTunnel {
     
     private static boolean CONSOLE_MODE = false;
     public static boolean ENABLE_SNIFFER = false;
+    public static boolean SNIFFER_UI_RENDER = false;
 
     public static void main(String[] args) {
         //Parse launch arguments
@@ -95,6 +96,7 @@ public class PowerTunnel {
                                 " -ip [IP Address] - sets IP Address\n" +
                                 " -port [Port] - sets port\n" +
                                 " -with-sniffer - enables sniffer with control panel at http://invadermitmmonitor.info\n" +
+                                " -render-sniffed-content - enables rendering of sniffed content, e.g. HTML\n" +
                                 " -disable-native-lf - disables native L&F (when UI enabled)\n" +
                                 " -disable-ui-scaling - disables UI scaling (when UI enabled)\n" +
                                 " -disable-updater - disables the update notifier\n" +
@@ -116,6 +118,10 @@ public class PowerTunnel {
                     }
                     case "with-sniffer": {
                         ENABLE_SNIFFER = true;
+                        break;
+                    }
+                    case "render-sniffed-content": {
+                        SNIFFER_UI_RENDER = true;
                         break;
                     }
                     case "disable-ui-scaling": {

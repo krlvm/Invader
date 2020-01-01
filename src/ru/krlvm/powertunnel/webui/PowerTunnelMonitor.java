@@ -1,6 +1,8 @@
 package ru.krlvm.powertunnel.webui;
 
 import io.netty.handler.codec.http.HttpResponse;
+import ru.krlvm.invader.Invader;
+import ru.krlvm.invader.SnifferRecord;
 import ru.krlvm.powertunnel.PowerTunnel;
 import ru.krlvm.powertunnel.data.DataStore;
 import ru.krlvm.powertunnel.frames.JournalFrame;
@@ -8,12 +10,13 @@ import ru.krlvm.powertunnel.utilities.HttpUtility;
 import ru.krlvm.powertunnel.utilities.Utility;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class PowerTunnelMonitor {
 
     private static final String DEFAULT_HTML = "<html>\n" +
             "<head>\n" +
-            "    <title>PowerTunnel Monitor</title>\n" +
+            "    <title>Invader Monitor</title>\n" +
             "    <style>\n" +
             "        html, body {\n" +
             "            text-align: center;\n" +
@@ -74,7 +77,7 @@ public class PowerTunnelMonitor {
             "    </script>\n" +
             "</head>\n" +
             "<body>\n" +
-            "    <h1>PowerTunnel Monitor</h1>\n" +
+            "    <h1>Invader Monitor | <a href=\"sniffer\">Sniffer</a></h1>\n" +
             "    <div id=\"lists\">\n" +
             "        <div class=\"list\" id=\"blacklist\" style=\"float: left;\">\n" +
             "            <h2>Blacklist:</h2>\n" +
@@ -103,13 +106,61 @@ public class PowerTunnelMonitor {
             "    </div>\n" +
             "    <br>\n" +
             "    <div id=\"about\">\n" +
-            "        <b>PowerTunnel v" + PowerTunnel.VERSION + "<br><a href=\"" + PowerTunnel.REPOSITORY_URL + "\">" + PowerTunnel.REPOSITORY_URL + "</a></b>\n" +
+            "        <b>Invader " + PowerTunnel.VERSION + "<br><a href=\"https://github.com/krlvm/Invader\">https://github.com/krlvm/Invader</a></b>\n" +
             "        <br>\n" +
             "        (c) krlvm, 2019-2020\n" +
             "    </div>\n" +
             "</body>\n" +
             "</html>";
     private static String HTML = DEFAULT_HTML;
+
+    private static final String DEFAULT_SNIFFER_HTML = "<html>\n" +
+            "<head>\n" +
+            "    <title>Invader Sniffer</title>\n" +
+            "    <style>\n" +
+            "        html, body {\n" +
+            "            text-align: center;\n" +
+            "        }\n" +
+            "\n" +
+            "        #view {\n" +
+            "            overflow-y: scroll;\n" +
+            "            padding-bottom: 5px;\n" +
+            "            border-top: 5px solid;\n" +
+            "            border-bottom: 5px solid;\n" +
+            "            justify-content: space-between;\n" +
+            "            height: 74vh;\n" +
+            "            width: 100%;\n" +
+            "        }\n" +
+            "\n" +
+            "        .record {\n" +
+            "            text-align: left;\n" +
+            "            margin: 10px;\n" +
+            "            padding: 5px;\n" +
+            "            border: solid 2px gray;\n" +
+            "        }\n" +
+            "\n" +
+            "        .record textarea {\n" +
+            "            width: 100%;\n" +
+            "            height: 350px;\n" +
+            "            resize: none;\n" +
+            "            border: none;\n" +
+            "        }\n" +
+            "    </style>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "    <h1>Invader <a href=\"/\">Monitor</a> | Sniffer</h1>\n" +
+            "    <div id=\"view\">\n" +
+            "        {content}\n" +
+            "    </div>\n" +
+            "    <br>\n" +
+            "    <div id=\"about\">\n" +
+            "        <b>Invader " + PowerTunnel.VERSION + "<br><a href=\"https://github.com/krlvm/Invader\">https://github.com/krlvm/Invader</a></b>\n" +
+            "        <br>\n" +
+            "        (c) krlvm, 2019-2020\n" +
+            "    </div>\n" +
+            "</body>\n" +
+            "</html>";
+    private static String SNIFFER_HTML = DEFAULT_SNIFFER_HTML;
 
     public static final String FAKE_ADDRESS = "invadermitmmonitor.info";
     private static final String[] FORMAT = new String[] {
@@ -123,9 +174,19 @@ public class PowerTunnelMonitor {
         }
     };
 
+    private static final DataStore SNIFFER_STORE = new DataStore("snifferui", SNIFFER_HTML) {
+        @Override
+        public String getFileFormat() {
+            return "html";
+        }
+    };
+
     public static void load() throws IOException {
         HTML_STORE.load();
         HTML = HTML_STORE.inline();
+
+        SNIFFER_STORE.load();
+        SNIFFER_HTML = SNIFFER_STORE.inline();
         Utility.print("[!] Sniffer is enabled now and available at http://" + FAKE_ADDRESS);
     }
 
@@ -158,14 +219,37 @@ public class PowerTunnelMonitor {
             if(uriArray.length < 2) {
                 return HttpUtility.getResponse("Invalid request");
             }
-            String query = uriArray[1];
+            String query = uriArray[1].toLowerCase();
+            if(query.equals("sniffer")) {
+                int id = 0;
+                StringBuilder snifferContent = new StringBuilder();
+                for (SnifferRecord record : Invader.SNIFFER_RECORDS) {
+                    snifferContent.append("<div class=\"record\"><b><u>");
+                    snifferContent.append(record.getSource());
+                    snifferContent.append("</u></b><hr><b><u>Headers:</u></b><br>");
+                    for (Map.Entry<String, String> header : record.getHeaders()) {
+                        snifferContent.append(header.getKey()).append(": ").append(header.getValue()).append("<br>");
+                    }
+                    int currentId = id++;
+                    snifferContent.append("<hr><b><u>Content:</u></b><br><span id=\"content").append(currentId).append("\" style=\"display:none\">");
+                    if(!PowerTunnel.SNIFFER_UI_RENDER) {
+                        snifferContent.append("<textarea disabled=\"true\">");
+                    }
+                    snifferContent.append(record.getContent());
+                    if(!PowerTunnel.SNIFFER_UI_RENDER) {
+                        snifferContent.append("</textarea>");
+                    }
+                    snifferContent.append("</span><a href=\"#\" onclick=\"document.getElementById('content").append(currentId).append("').style.display='block';this.style.display='none';\">View</a></div>");
+                }
+                return HttpUtility.getResponse(SNIFFER_HTML.replace("{content}", snifferContent.toString()));
+            }
             String[] queryArray = query.split("-");
             if(queryArray.length < 2) {
                 return HttpUtility.getResponse("Invalid query");
             }
-            String action = queryArray[0];
+            String action = queryArray[0].toLowerCase();
             String address = queryArray[1];
-            switch (action.toLowerCase()) {
+            switch (action) {
                 case "unblock": {
                     PowerTunnel.removeFromUserBlacklist(address);
                     break;

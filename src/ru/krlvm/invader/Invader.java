@@ -28,6 +28,7 @@ public class Invader {
     private static final DataStore MAP_STORE = new DataStore("script-map");
 
     private static final DataStore CERTIFICATE_PASSWORD = new DataStore("cert-password");
+    public static final List<SnifferRecord> SNIFFER_RECORDS = new LinkedList<>();
 
     public static void loadScripts() throws DataStoreException, IOException {
         File directory = new File(SCRIPT_DIRECTORY);
