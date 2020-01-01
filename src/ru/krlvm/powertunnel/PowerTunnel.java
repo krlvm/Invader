@@ -205,7 +205,7 @@ public class PowerTunnel {
         Utility.print("An effective MITM utility and script injector");
         Utility.print("Based on " + BASE_VERSION + " (" + BASE_REPOSITORY + ")");
         Utility.print(REPOSITORY_URL);
-        Utility.print("(c) krlvm, 2019");
+        Utility.print("(c) krlvm, 2019-2020");
         Utility.print();
 
         //Allow us to modify 'HOST' request header
