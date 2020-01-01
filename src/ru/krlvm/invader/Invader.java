@@ -36,7 +36,7 @@ public class Invader {
         }
 
         MAIN_SCRIPT_STORE.load();
-        String unformattedMainScript = MAIN_SCRIPT_STORE.getScript();
+        String unformattedMainScript = MAIN_SCRIPT_STORE.inline();
         if(unformattedMainScript.isEmpty()) {
             MAIN_SCRIPT = null;
         } else {
@@ -60,7 +60,7 @@ public class Invader {
             }
             ScriptStore script = new ScriptStore(SCRIPT_DIRECTORY + "/" + array[1]);
             script.load();
-            SITE_SCRIPTS.get(url).add("<script>" + script.getScript() + "</script>");
+            SITE_SCRIPTS.get(url).add("<script>" + script.inline() + "</script>");
             count++;
         }
 
@@ -73,11 +73,7 @@ public class Invader {
 
     public static CertificateSniffingMitmManager mitmManager() throws RootCertificateException, IOException {
         CERTIFICATE_PASSWORD.load();
-        StringBuilder builder = new StringBuilder();
-        for (String line : CERTIFICATE_PASSWORD.getLoadedLines()) {
-            builder.append(line);
-        }
-        String password = builder.toString();
+        String password = CERTIFICATE_PASSWORD.inline();
         if(password.isEmpty()) {
             throw new IOException("Please come up with a strong password and write it in the 'cert-password.txt'");
         }
