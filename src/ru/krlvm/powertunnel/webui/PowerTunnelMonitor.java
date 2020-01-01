@@ -111,7 +111,7 @@ public class PowerTunnelMonitor {
             "</html>";
     private static String HTML = DEFAULT_HTML;
 
-    public static final String FAKE_ADDRESS = "powertunnelmonitor.info";
+    public static final String FAKE_ADDRESS = "invadermitmmonitor.info";
     private static final String[] FORMAT = new String[] {
             "http://", "www."
     };
