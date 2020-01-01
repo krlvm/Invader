@@ -6,6 +6,7 @@ import io.netty.handler.codec.http.*;
 import org.littleshoot.proxy.HttpFiltersAdapter;
 import ru.krlvm.invader.ComplexProxyToClientResponse;
 import ru.krlvm.invader.Invader;
+import ru.krlvm.invader.SnifferRecord;
 import ru.krlvm.powertunnel.PowerTunnel;
 import ru.krlvm.powertunnel.utilities.Debugger;
 import ru.krlvm.powertunnel.utilities.HttpUtility;
@@ -38,6 +39,7 @@ public class ProxyFilter extends HttpFiltersAdapter {
         if (httpObject instanceof HttpRequest) {
             HttpRequest request = (HttpRequest) httpObject;
             if(PowerTunnel.ENABLE_SNIFFER && PowerTunnelMonitor.checkUri(request.getUri())) {
+                Utility.print("[i] Accepted Web UI connection");
                 return PowerTunnelMonitor.getResponse(request.getUri());
             }
             String host = HttpUtility.formatHost(request.headers().get("Host"));
@@ -60,6 +62,11 @@ public class ProxyFilter extends HttpFiltersAdapter {
         if(httpObject instanceof FullHttpResponse) {
             FullHttpResponse response = ((FullHttpResponse) httpObject);
             String content = response.content().toString(StandardCharsets.UTF_8);
+            if(PowerTunnel.ENABLE_SNIFFER) {
+                Invader.SNIFFER_RECORDS.add(new SnifferRecord(complexResponse.getServerHostAndPort() == null ?
+                        "Unknown source" : complexResponse.getServerHostAndPort(),
+                        response.headers(), content));
+            }
             if(content.endsWith("</html>") || content.endsWith("</HTML>")) {
                 String injection = Invader.getInjection(complexResponse.getServerHostAndPort());
                 if(injection != null) {
