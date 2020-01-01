@@ -17,6 +17,7 @@ import ru.krlvm.powertunnel.updater.UpdateNotifier;
 import ru.krlvm.powertunnel.utilities.Debugger;
 import ru.krlvm.powertunnel.utilities.URLUtility;
 import ru.krlvm.powertunnel.utilities.Utility;
+import ru.krlvm.powertunnel.webui.PowerTunnelMonitor;
 import ru.krlvm.swingdpi.SwingDPI;
 
 import javax.swing.*;
@@ -36,7 +37,7 @@ import java.util.*;
  * user lists, holds journal and controlling a LittleProxy Server
  *
  * Invader is build around PowerTunnel - a simple and effective anti-censorship solution
- * Base PowerTunnel version: 1.6 (code 7)
+ * Base PowerTunnel version: 1.7.1 (code 9)
  * https://github.com/krlvm/PowerTunnel
  *
  * @author krlvm
@@ -48,8 +49,8 @@ public class PowerTunnel {
     public static final int VERSION_CODE = 5;
     public static final String REPOSITORY_URL = "https://github.com/krlvm/Invader";
 
-    public static final String BASE_VERSION = "PowerTunnel v1.6";
-    public static final int BASE_VERSION_CODE = 7;
+    public static final String BASE_VERSION = "PowerTunnel v1.7.1";
+    public static final int BASE_VERSION_CODE = 9;
     public static final String BASE_REPOSITORY = "https://github.com/krlvm/PowerTunnel";
 
     private static HttpProxyServer SERVER;
@@ -71,6 +72,7 @@ public class PowerTunnel {
     public static UserListFrame[] USER_FRAMES;
     
     private static boolean CONSOLE_MODE = false;
+    public static boolean ENABLE_SNIFFER = false;
 
     public static void main(String[] args) {
         //Parse launch arguments
@@ -92,6 +94,7 @@ public class PowerTunnel {
                                 " -console - console mode, without UI\n" +
                                 " -ip [IP Address] - sets IP Address\n" +
                                 " -port [Port] - sets port\n" +
+                                " -with-sniffer - enables sniffer with control panel at http://invadermitmmonitor.info\n" +
                                 " -disable-native-lf - disables native L&F (when UI enabled)\n" +
                                 " -disable-ui-scaling - disables UI scaling (when UI enabled)\n" +
                                 " -disable-updater - disables the update notifier\n" +
@@ -109,6 +112,10 @@ public class PowerTunnel {
                     }
                     case "console": {
                         CONSOLE_MODE = true;
+                        break;
+                    }
+                    case "with-sniffer": {
+                        ENABLE_SNIFFER = false;
                         break;
                     }
                     case "disable-ui-scaling": {
@@ -197,6 +204,17 @@ public class PowerTunnel {
 
         //Allow us to modify 'HOST' request header
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+
+        if(ENABLE_SNIFFER) {
+            try {
+                PowerTunnelMonitor.load();
+                Utility.print("[!] Sniffer is enabled now and available at http://invadermitmmonitor.info");
+            } catch (IOException ex) {
+                Utility.print("[x] Cannot load sniffer's Web UI, now it is disabled: " + ex.getMessage());
+                Debugger.debug(ex);
+                ENABLE_SNIFFER = false;
+            }
+        }
 
         if(CONSOLE_MODE || startNow) {
             safeBootstrap();
