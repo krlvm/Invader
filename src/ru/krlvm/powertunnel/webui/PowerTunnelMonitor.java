@@ -139,11 +139,11 @@ public class PowerTunnelMonitor {
             "            border: solid 2px gray;\n" +
             "        }\n" +
             "\n" +
-            "        .record textarea {\n" +
+            "        .record .code {\n" +
             "            width: 100%;\n" +
             "            height: 350px;\n" +
-            "            resize: none;\n" +
-            "            border: none;\n" +
+            "            border: solid 1px black;\n" +
+            "            background-color: lightgray;\n" +
             "        }\n" +
             "    </style>\n" +
             "</head>\n" +
@@ -233,11 +233,11 @@ public class PowerTunnelMonitor {
                     int currentId = id++;
                     snifferContent.append("<hr><b><u>Content:</u></b><br><span id=\"content").append(currentId).append("\" style=\"display:none\">");
                     if(!PowerTunnel.SNIFFER_UI_RENDER) {
-                        snifferContent.append("<textarea disabled=\"true\">");
-                    }
-                    snifferContent.append(record.getContent());
-                    if(!PowerTunnel.SNIFFER_UI_RENDER) {
-                        snifferContent.append("</textarea>");
+                        snifferContent.append("<div class=\"code\">");
+                        snifferContent.append(record.getContent().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
+                        snifferContent.append("</div>");
+                    } else {
+                        snifferContent.append(record.getContent());
                     }
                     snifferContent.append("</span><span style=\"cursor:pointer;color:blue;text-decoration:underline;\" onclick=\"document.getElementById('content").append(currentId).append("').style.display='block';this.style.display='none';\">View</span></div>");
                 }
