@@ -1,7 +1,6 @@
 package ru.krlvm.powertunnel.frames;
 
 import ru.krlvm.powertunnel.PowerTunnel;
-import ru.krlvm.swingdpi.SwingDPI;
 
 import javax.swing.*;
 import java.awt.*;

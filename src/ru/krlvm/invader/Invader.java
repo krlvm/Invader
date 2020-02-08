@@ -5,12 +5,16 @@ import org.littleshoot.proxy.mitm.CertificateSniffingMitmManager;
 import org.littleshoot.proxy.mitm.RootCertificateException;
 import ru.krlvm.powertunnel.data.DataStore;
 import ru.krlvm.powertunnel.data.DataStoreException;
+import ru.krlvm.powertunnel.frames.MainFrame;
 import ru.krlvm.powertunnel.utilities.URLUtility;
 import ru.krlvm.powertunnel.utilities.Utility;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 /**
  * The general class of Invader -
@@ -101,5 +105,17 @@ public class Invader {
             script.append(s);
         }
         return script.toString();
+    }
+
+    public static void safeReloadScripts(Component parentComponent) {
+        try {
+            Invader.loadScripts();
+            JOptionPane.showMessageDialog(parentComponent, "Scripts have been reloaded",
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(parentComponent, "An error occurred while reading scripts: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
     }
 }

@@ -4,7 +4,6 @@ import ru.krlvm.invader.Invader;
 import ru.krlvm.powertunnel.PowerTunnel;
 import ru.krlvm.powertunnel.utilities.Debugger;
 import ru.krlvm.powertunnel.utilities.UIUtility;
-import ru.krlvm.powertunnel.utilities.Utility;
 import ru.krlvm.swingdpi.SwingDPI;
 
 import javax.swing.*;
@@ -13,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 
 public class MainFrame extends ControlFrame {
 
@@ -23,10 +21,10 @@ public class MainFrame extends ControlFrame {
 
     public MainFrame() {
         super(PowerTunnel.NAME + " v" + PowerTunnel.VERSION);
-        double multiplier = SwingDPI.isScaleApplied() ? (SwingDPI.getScaleFactor() / (SwingDPI.getScaleFactor() - 0.25)) + 0.05 : 1.3;
+        float multiplier = SwingDPI.isScaleApplied() ? (SwingDPI.getScaleFactor() / (SwingDPI.getScaleFactor() - 0.25F)) + 0.05F : 1.3F;
         Debugger.debug("Scale multiplier: " + multiplier);
-        setSize((int) (310 * (SwingDPI.getScaleFactor() * multiplier)), (int) (150 * (SwingDPI.getScaleFactor() * multiplier)));
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize((int) (310 * (UIUtility.getResidualScaleFactor() * multiplier)),
+                (int) (182 * (UIUtility.getResidualScaleFactor() * multiplier)));
 
         header = new JLabel(getHeaderText());
 
@@ -36,7 +34,7 @@ public class MainFrame extends ControlFrame {
         ipInput.setText(String.valueOf(PowerTunnel.SERVER_IP_ADDRESS));
 
         final JTextField portInput = new JTextField();
-        portInput.setPreferredSize(SwingDPI.scale(75, 22));
+        portInput.setPreferredSize(SwingDPI.scale(76, 22));
         portInput.setToolTipText("Port");
         portInput.setText(String.valueOf(PowerTunnel.SERVER_PORT));
 
@@ -46,22 +44,27 @@ public class MainFrame extends ControlFrame {
         stateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (PowerTunnel.isRunning()) {
-                    PowerTunnel.stopServer();
-                } else {
-                    try {
-                        PowerTunnel.SERVER_IP_ADDRESS = ipInput.getText();
-                        PowerTunnel.SERVER_PORT = Integer.parseInt(portInput.getText());
-                        String error = PowerTunnel.safeBootstrap();
-                        if (error != null) {
-                            JOptionPane.showMessageDialog(MainFrame.this, error,
-                                    "Error", JOptionPane.ERROR_MESSAGE);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (PowerTunnel.getStatus() == ServerStatus.RUNNING) {
+                            PowerTunnel.stopServer();
+                        } else {
+                            try {
+                                PowerTunnel.SERVER_IP_ADDRESS = ipInput.getText();
+                                PowerTunnel.SERVER_PORT = Integer.parseInt(portInput.getText());
+                                String error = PowerTunnel.safeBootstrap();
+                                if (error != null) {
+                                    JOptionPane.showMessageDialog(MainFrame.this, error,
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(MainFrame.this, "Invalid port",
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(MainFrame.this, "Invalid port",
-                                "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                }
+                }).start();
             }
         });
 
@@ -97,19 +100,11 @@ public class MainFrame extends ControlFrame {
             }
         });
 
-        JButton reloadScripts = new JButton("Reload");
+        JButton reloadScripts = new JButton("Reload scripts");
         reloadScripts.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    Invader.loadScripts();
-                    JOptionPane.showMessageDialog(MainFrame.this, "Scripts have been reloaded",
-                            "Success", JOptionPane.INFORMATION_MESSAGE);
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(MainFrame.this, "An error occurred while reading scripts: " + ex.getMessage(),
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace();
-                }
+                Invader.safeReloadScripts(MainFrame.this);
             }
         });
 
@@ -138,8 +133,9 @@ public class MainFrame extends ControlFrame {
         mainPanel.add(panel, "Last");
 
         panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panel.add(UIUtility.getLabelWithHyperlinkSupport("<b><a href=\"" + PowerTunnel.REPOSITORY_URL + "\">" + PowerTunnel.REPOSITORY_URL + "</a></b><br>(c) krlvm, 2019-2020", "text-align: center"));
-        //panel.add(new JLabel(getCenteredLabel("<b>https://github.com/krlvm/PowerTunnel</b><br>(c) krlvm, 2019")));
+        panel.add(UIUtility.getLabelWithHyperlinkSupport("<a href=\"" + PowerTunnel.REPOSITORY_URL + "/issues\">Submit a bug</a> | " + "<a href=\"" + PowerTunnel.REPOSITORY_URL + "/blob/master/README.md\">Help</a><br>" +
+                "<b><a style=\"color: black\" href=\"" + PowerTunnel.REPOSITORY_URL + "\">" + PowerTunnel.REPOSITORY_URL + "</a>" +
+                "</b><br><br>(c) krlvm, 2019-2020", "text-align: center"));
         mainPanel.add(panel, "Last");
 
         getRootPane().setDefaultButton(stateButton);
@@ -148,30 +144,37 @@ public class MainFrame extends ControlFrame {
         setVisible(true);
 
         //save data
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if(PowerTunnel.isRunning()) {
-                    PowerTunnel.stop();
-                } else {
-                    PowerTunnel.safeUserListSave();
+                if(PowerTunnel.getStatus() != ServerStatus.NOT_RUNNING && PowerTunnel.getTray().isLoaded()) {
+                    PowerTunnel.getTray().showNotification(PowerTunnel.NAME + " is still working in tray mode");
+                    return;
                 }
-                Utility.print("[#] Goodbye :(");
+                PowerTunnel.handleClosing();
             }
         });
     }
 
     public void update() {
-        boolean running = PowerTunnel.isRunning();
-        stateButton.setText((running ? "Stop" : "Start") + " server");
-        for (JTextField input : inputs) {
-            input.setEnabled(!running);
-        }
-        header.setText(getHeaderText());
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                boolean running = PowerTunnel.getStatus() == ServerStatus.RUNNING;
+                stateButton.setText((running ? "Stop" : "Start") + " server");
+                header.setText(getHeaderText());
+                boolean activateUI = !(PowerTunnel.getStatus() == ServerStatus.STARTING || PowerTunnel.getStatus() == ServerStatus.STOPPING);
+                stateButton.setEnabled(activateUI);
+                for (JTextField input : inputs) {
+                    input.setEditable(PowerTunnel.getStatus() == ServerStatus.NOT_RUNNING);
+                }
+            }
+        });
     }
 
     private String getHeaderText() {
-        return getCenteredLabel("<b>" + PowerTunnel.NAME + " MITM v" + PowerTunnel.VERSION + "</b><br>Server is" + (PowerTunnel.isRunning() ? " running" : "n't running") + "</div></html>");
+        return getCenteredLabel("<b>" + PowerTunnel.NAME + " v" + PowerTunnel.VERSION + "</b><br>Server is" + PowerTunnel.getStatus() + "</div></html>");
     }
 
     private String getCenteredLabel(String text) {

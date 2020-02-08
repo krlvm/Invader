@@ -10,6 +10,7 @@ import javax.swing.*;
  */
 public abstract class ControlFrame extends ScalableJFrame {
 
+
     public ControlFrame() {
         this(null);
     }
@@ -17,6 +18,7 @@ public abstract class ControlFrame extends ScalableJFrame {
     public ControlFrame(String title) {
         super(title);
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        setIconImage(UIUtility.UI_ICON);
     }
 
     /**

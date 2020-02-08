@@ -187,7 +187,7 @@ public class PowerTunnelMonitor {
 
         SNIFFER_STORE.load();
         SNIFFER_HTML = SNIFFER_STORE.inline();
-        Utility.print("[!] Sniffer is enabled now and available at http://" + FAKE_ADDRESS);
+        Utility.print("[!] Sniffer is enabled and available at http://" + FAKE_ADDRESS);
     }
 
     public static boolean checkUri(String uri) {
