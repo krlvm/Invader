@@ -28,7 +28,7 @@ In `scripts` folder you can find `main.js`. It is a script, that will be injecte
 If you need no global script, just left `main.js` empty.
 
 ## Traffic sniffer
-Since v1.3 Invader is shipping with a built-in sniffer module. Use argument `-with-sniffer` to activate it. You're can view sniffed traffic at Invader Monitor - http://invadermitmmonitor.info/sniffer. This is a fake address available only when you are connected to proxy.
+Since v1.3 Invader is shipping with a built-in sniffer module. Use argument `-with-sniffer [appendix]` to activate it, where appendix - any word. You're can view sniffed traffic at Invader Monitor - `http://invadermitmmonitor[appendix].info/sniffer`. This is a fake address available only when you are connected to proxy.
 
 If you want to render sniffed HTML content add an argument -render-sniffed-content.
 
