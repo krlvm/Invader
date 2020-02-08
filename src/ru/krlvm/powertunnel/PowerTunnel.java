@@ -260,6 +260,8 @@ public class PowerTunnel {
             Utility.print("[x] Failed to initialize certificate: " + ex.getMessage());
             ex.printStackTrace();
             return "Failed to initialize certificate: " + ex.getMessage();
+        } finally {
+            setStatus(ServerStatus.NOT_RUNNING);
         }
         return null;
     }
