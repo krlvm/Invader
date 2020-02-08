@@ -23,7 +23,7 @@ public class MainFrame extends ControlFrame {
         super(PowerTunnel.NAME + " v" + PowerTunnel.VERSION);
         float multiplier = SwingDPI.isScaleApplied() ? (SwingDPI.getScaleFactor() / (SwingDPI.getScaleFactor() - 0.25F)) + 0.05F : 1.3F;
         Debugger.debug("Scale multiplier: " + multiplier);
-        setSize((int) (310 * (UIUtility.getResidualScaleFactor() * multiplier)),
+        setSize((int) (320 * (UIUtility.getResidualScaleFactor() * multiplier)),
                 (int) (182 * (UIUtility.getResidualScaleFactor() * multiplier)));
 
         header = new JLabel(getHeaderText());
@@ -174,7 +174,7 @@ public class MainFrame extends ControlFrame {
     }
 
     private String getHeaderText() {
-        return getCenteredLabel("<b>" + PowerTunnel.NAME + " v" + PowerTunnel.VERSION + "</b><br>Server is" + PowerTunnel.getStatus() + "</div></html>");
+        return getCenteredLabel("<b>" + PowerTunnel.NAME + " MITM v" + PowerTunnel.VERSION + "</b><br>Server is" + PowerTunnel.getStatus() + "</div></html>");
     }
 
     private String getCenteredLabel(String text) {
