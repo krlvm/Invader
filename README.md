@@ -1,9 +1,18 @@
-# Invader
+<div align="center">
+<img src="https://raw.githubusercontent.com/krlvm/Invader/master/images/logo.png" height="192px" width="192px" />
+<br><h1>Invader</h1><br>
 An effective MITM utility and script injector
-
-Invader is built around PowerTunnel v1.7.1 and provides ability to inject a custom JavaScript to any website using your own self-signed MITM Root CA and block any URL you want.
+<br><br>
+<a href="https://github.com/krlvm/Invader/blob/master/LICENSE"><img src="https://img.shields.io/github/license/krlvm/Invader?style=flat-square" alt="License"/></a>
+<a href="https://github.com/krlvm/Invader/releases"><img src="https://img.shields.io/github/v/release/krlvm/Invader?style=flat-square" alt="Latest release"/></a>
+<a href="https://github.com/krlvm/Invader/releases"><img src="https://img.shields.io/github/downloads/krlvm/Invader/total?style=flat-square" alt="Downloads"/></a>
+<br>
+<img src="https://raw.githubusercontent.com/krlvm/Invader/master/images/ui.png" alt="Invader User Interface" />
+</div>
 
 ## Getting started
+Invader is built around PowerTunnel v1.8.4 and provides ability to inject a custom JavaScript to any website using your own self-signed MITM Root CA and block any URL you want.
+
 ### Download Invader
 Download a binary from the `Releases` tab or build it yourself.
 You need Java 7+.
