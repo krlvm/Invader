@@ -162,7 +162,8 @@ public class PowerTunnelMonitor {
             "</html>";
     private static String SNIFFER_HTML = DEFAULT_SNIFFER_HTML;
 
-    public static final String FAKE_ADDRESS = "invadermitmmonitor.info";
+    public static final String FAKE_ADDRESS_TEMPLATE = "invadermitmmonitor%s.info";
+    public static String FAKE_ADDRESS;
     private static final String[] FORMAT = new String[] {
             "http://", "www."
     };

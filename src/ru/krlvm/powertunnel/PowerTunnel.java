@@ -75,7 +75,6 @@ public class PowerTunnel {
     public static UserListFrame[] USER_FRAMES;
     
     private static boolean CONSOLE_MODE = false;
-    public static boolean ENABLE_SNIFFER = false;
     public static boolean SNIFFER_UI_RENDER = false;
 
     public static void main(String[] args) {
@@ -98,7 +97,7 @@ public class PowerTunnel {
                                 " -console - console mode, without UI\n" +
                                 " -ip [IP Address] - sets IP Address\n" +
                                 " -port [Port] - sets port\n" +
-                                " -with-sniffer - enables sniffer with control panel at http://invadermitmmonitor.info\n" +
+                                " -with-sniffer [appendix] - enables Web UI at http://" + String.format(PowerTunnelMonitor.FAKE_ADDRESS_TEMPLATE, "[appendix]") + "\n" +
                                 " -render-sniffed-content - enables rendering of sniffed content, e.g. HTML\n" +
                                 " -full-output-mirroring - fully mirrors system output to the log\n" +
                                 " -disable-native-lf - disables native L&F (when UI enabled)\n" +
@@ -124,10 +123,6 @@ public class PowerTunnel {
                         CONSOLE_MODE = true;
                         break;
                     }
-                    case "with-sniffer": {
-                        ENABLE_SNIFFER = true;
-                        break;
-                    }
                     case "render-sniffed-content": {
                         SNIFFER_UI_RENDER = true;
                         break;
@@ -150,6 +145,10 @@ public class PowerTunnel {
                         } else {
                             String value = args[i + 1];
                             switch (arg) {
+                                case "with-sniffer": {
+                                    PowerTunnelMonitor.FAKE_ADDRESS = String.format(PowerTunnelMonitor.FAKE_ADDRESS_TEMPLATE, value);
+                                    break;
+                                }
                                 case "ip": {
                                     SERVER_IP_ADDRESS = value;
                                     Utility.print("[#] IP address set to '%s'", SERVER_IP_ADDRESS);
@@ -224,13 +223,13 @@ public class PowerTunnel {
         Utility.print("(c) krlvm, 2019-2020");
         Utility.print();
 
-        if(ENABLE_SNIFFER) {
+        if(isSnifferEnabled()) {
             try {
                 PowerTunnelMonitor.load();
             } catch (IOException ex) {
                 Utility.print("[x] Cannot load sniffer's Web UI, now it is disabled: " + ex.getMessage());
                 Debugger.debug(ex);
-                ENABLE_SNIFFER = false;
+                PowerTunnelMonitor.FAKE_ADDRESS = null;
             }
         }
 
@@ -401,6 +400,10 @@ public class PowerTunnel {
      */
     public static boolean isUIEnabled() {
         return !CONSOLE_MODE;
+    }
+
+    public static boolean isSnifferEnabled() {
+        return PowerTunnelMonitor.FAKE_ADDRESS != null;
     }
 
     /*

@@ -38,7 +38,7 @@ public class ProxyFilter extends HttpFiltersAdapter {
     public HttpResponse clientToProxyRequest(HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             HttpRequest request = (HttpRequest) httpObject;
-            if(PowerTunnel.ENABLE_SNIFFER && PowerTunnelMonitor.checkUri(request.getUri())) {
+            if(PowerTunnel.isSnifferEnabled() && PowerTunnelMonitor.checkUri(request.getUri())) {
                 Utility.print("[i] Accepted Web UI connection");
                 return PowerTunnelMonitor.getResponse(request.getUri());
             }
@@ -62,7 +62,7 @@ public class ProxyFilter extends HttpFiltersAdapter {
         if(httpObject instanceof FullHttpResponse) {
             FullHttpResponse response = ((FullHttpResponse) httpObject);
             String content = response.content().toString(StandardCharsets.UTF_8);
-            if(PowerTunnel.ENABLE_SNIFFER) {
+            if(PowerTunnel.isSnifferEnabled()) {
                 Invader.SNIFFER_RECORDS.add(new SnifferRecord(complexResponse.getServerHostAndPort() == null ?
                         "Unknown source" : complexResponse.getServerHostAndPort(),
                         response.headers(), content));
