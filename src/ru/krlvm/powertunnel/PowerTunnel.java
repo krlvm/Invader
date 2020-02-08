@@ -252,12 +252,19 @@ public class PowerTunnel {
         } catch (IOException ex) {
             Utility.print("[x] Something went wrong: " + ex.getMessage());
             ex.printStackTrace();
-            return "Something went wrong: " + ex.getMessage();
+            error = "Something went wrong: " + ex.getMessage();
         } catch (DataStoreException ex) {
             Utility.print("[x] Failed to load data store: " + ex.getMessage());
             ex.printStackTrace();
             error = "Failed to load data store: " + ex.getMessage();
-        } catch (Exception ex) {
+        } catch (RootCertificateException ex) {
+            Utility.print("[x] Failed to initialize certificate: " + ex.getMessage());
+            ex.printStackTrace();
+            error = "Failed to initialize certificate: " + ex.getMessage();
+        } finally {
+            setStatus(ServerStatus.NOT_RUNNING);
+        }
+        if(error != null) {
             setStatus(ServerStatus.NOT_RUNNING);
         }
         return error;
