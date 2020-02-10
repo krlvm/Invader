@@ -47,8 +47,8 @@ import java.util.*;
 public class PowerTunnel {
 
     public static final String NAME = "Invader";
-    public static final String VERSION = "1.4";
-    public static final int VERSION_CODE = 8;
+    public static final String VERSION = "1.5";
+    public static final int VERSION_CODE = 9;
     public static final String REPOSITORY_URL = "https://github.com/krlvm/Invader";
 
     public static final String BASE_VERSION = "PowerTunnel v1.8.4";
