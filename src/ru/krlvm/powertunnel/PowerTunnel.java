@@ -310,6 +310,10 @@ public class PowerTunnel {
             public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
                 return new ProxyFilter(originalRequest);
             }
+            @Override
+            public int getMaximumResponseBufferSizeInBytes() {
+                return 10 * 1024 * 1024;
+            }
         }).withManInTheMiddle(Invader.mitmManager())
                 .withAddress(new InetSocketAddress(InetAddress.getByName(SERVER_IP_ADDRESS), SERVER_PORT))
                 .withTransparent(true).start();
