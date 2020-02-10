@@ -7,6 +7,7 @@ import org.littleshoot.proxy.HttpFiltersAdapter;
 import ru.krlvm.invader.ComplexProxyToClientResponse;
 import ru.krlvm.invader.Invader;
 import ru.krlvm.invader.SnifferRecord;
+import ru.krlvm.invader.UserScripting;
 import ru.krlvm.powertunnel.PowerTunnel;
 import ru.krlvm.powertunnel.utilities.Debugger;
 import ru.krlvm.powertunnel.utilities.HttpUtility;
@@ -47,6 +48,12 @@ public class ProxyFilter extends HttpFiltersAdapter {
             PowerTunnel.addToJournal(host);
             Utility.print("[i] %s / %s", request.getMethod(), host);
 
+            HttpResponse hook = UserScripting.onRequest(request);
+            if(hook != null) {
+                Utility.print(" [!] Request rejected by user hook: " + host);
+                return hook;
+            }
+
             if(!PowerTunnel.isUserWhitelisted(host) && PowerTunnel.isUserBlacklisted(host)) {
                 Utility.print(" [!] Access denied by user: " + host);
                 return HttpUtility.getStub("This website is blocked by user");
@@ -62,10 +69,17 @@ public class ProxyFilter extends HttpFiltersAdapter {
         if(httpObject instanceof FullHttpResponse) {
             FullHttpResponse response = ((FullHttpResponse) httpObject);
             String content = response.content().toString(StandardCharsets.UTF_8);
+            String host = complexResponse.getServerHostAndPort() == null ?
+                    "INVADER_UNKNOWN" : complexResponse.getServerHostAndPort();
             if(PowerTunnel.isSnifferEnabled()) {
-                Invader.SNIFFER_RECORDS.add(new SnifferRecord(complexResponse.getServerHostAndPort() == null ?
-                        "Unknown source" : complexResponse.getServerHostAndPort(),
-                        response.headers(), content));
+                Invader.SNIFFER_RECORDS.add(new SnifferRecord(host, response.headers(), content));
+            }
+            HttpResponse hook = UserScripting.onResponse(host, content, response);
+            if(hook != null) {
+                Utility.print("[!] Response rejected by user hook: " + host);
+                return hook;
+            } else {
+                System.out.println("////////hook = nyll");
             }
             if(content.endsWith("</html>") || content.endsWith("</HTML>")) {
                 String injection = Invader.getInjection(complexResponse.getServerHostAndPort());

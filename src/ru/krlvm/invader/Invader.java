@@ -69,6 +69,12 @@ public class Invader {
             count++;
         }
 
+        try {
+            UserScripting.load();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         Utility.print("[Invader] Loaded main script and '%s' site scripts", count);
     }
 
