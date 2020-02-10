@@ -72,6 +72,7 @@ public class Invader {
         try {
             UserScripting.load();
         } catch (Exception ex) {
+            Utility.print("[Invader] Failed to load hooks: " + ex.getMessage());
             ex.printStackTrace();
         }
 
