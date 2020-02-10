@@ -275,6 +275,7 @@ public class PowerTunnel {
         setStatus(ServerStatus.STARTING);
         //Load data
         try {
+            Invader.loadScripts();
             for (String address : DataStore.USER_BLACKLIST.load()) {
                 addToUserBlacklist(address);
             }
