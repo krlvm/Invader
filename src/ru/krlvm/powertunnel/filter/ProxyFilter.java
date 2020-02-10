@@ -78,8 +78,6 @@ public class ProxyFilter extends HttpFiltersAdapter {
             if(hook != null) {
                 Utility.print("[!] Response rejected by user hook: " + host);
                 return hook;
-            } else {
-                System.out.println("////////hook = nyll");
             }
             if(content.endsWith("</html>") || content.endsWith("</HTML>")) {
                 String injection = Invader.getInjection(complexResponse.getServerHostAndPort());
