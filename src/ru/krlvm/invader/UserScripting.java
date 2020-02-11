@@ -103,10 +103,8 @@ public class UserScripting {
      */
     public static HttpResponse onResponse(String host, String content, HttpResponse response) {
         if(INVOKER == null || !responseHandler) {
-            System.out.println("\nNO Response\n");
             return null;
         }
-        System.out.println("\nResponse\n");
         try {
             Map<String, String> headers = getHeaders(response);
             List<Object> filtered = ((List<Object>) convertIntoJavaObject(INVOKER.invokeFunction("onResponse",
