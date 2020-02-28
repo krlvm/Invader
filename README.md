@@ -17,6 +17,8 @@ Invader is based on PowerTunnel v1.8.4 and provides abilities related to the MIT
 * Invader provides a JavaScript Hook API that allows you to write code for request/response filtering (more about that below)
 * sniff HTTP/HTTPS traffic and display it on a local website
 
+PowerTunnel v1.9.2 codebase update is planned for April 2020.
+
 ### Download Invader
 Download a binary from the `Releases` tab or build it yourself.
 You need Java 7+.
